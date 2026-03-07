@@ -98,10 +98,19 @@ TOOLS = [
 
 app = FastAPI(title="Kubeflow Docs API Service", version="1.0.0")
 
+# Read allowed origins from environment variable
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+
+if allowed_origins_env:
+    allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",")]
+else:
+    # Safe default for development
+    allowed_origins = ["http://localhost:3000"]
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your actual domains
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
